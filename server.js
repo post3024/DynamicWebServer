@@ -141,14 +141,58 @@ app.get('/state/:selected_state', (req, res) => {
 
 // GET request handler for '/energy/*'
 app.get('/energy/:selected_energy_source', (req, res) => {
-    console.log(req.params.selected_energy_source);
-    fs.readFile(path.join(template_dir, 'energy.html'), (err, template) => {
-        // modify `template` and send response
-        // this will require a query to the SQL database
+    // this will require a query to the SQL database
+    let energyOptions = {coal: 'Coal', natural_gas: 'Natural Gas', nuclear: 'Nuclear', petroleum: 'Petroleum', renewable: 'Renewable'};
+    let energy_type = req.params.selected_energy_source.toLowerCase();
+    if (energyOptions.hasOwnProperty(energy_type) == false) {
+        res.status(404).send("ERROR 404 \n\n " + energy_type + "is not a valid energy source"); 
+    } else {
+        let energyTypeQuery = "SELECT year, state_abbreviation, " + req.params.selected_energy_source + " FROM Consumption ORDER BY year, state_abbreviation";
+        let rownamesQuery = "SELECT state_abbreviation FROM States ORDER BY state_abbreviation";
 
-        res.status(200).type('html').send(template); // <-- you may need to change this
-    });
+        Promise.all([readFilePromise(path.join(template_dir, 'energy.html')), dbQueryPromise(rownamesQuery), dbQueryPromise(energyTypeQuery)]).then((results) => {
+            // set promise resolves to the appropriate variables
+            let template = results[0];
+            let columns = results[1];
+            let energyTypeData = results[2];
+
+            let energy_counts = {};
+            //DYNAMICALLY CREATE ALL COLUMN HEADERS
+            let columnheaders = '';
+            for(i = 0; i < columns.length; i++) {
+                energy_counts[columns[i].state_abbreviation] = [];
+                columnheaders = columnheaders +  '<th>' + columns[i].state_abbreviation + "</th>";            
+            };
+        
+                //DYNAMICALLY FILL THE TABLE
+            let dataTable = '';
+            let year = 1900; //any number that's not 1960
+            for(i = 0; i < energyTypeData.length; i++) {
+                energy_counts[energyTypeData[i].state_abbreviation].push(energyTypeData[i][energy_type]);
+                if(i==0){                                    //first row
+                    dataTable = `${dataTable}<tr><th>${energyTypeData[i].year}</th><td>${energyTypeData[i][energy_type]}</td>` ;
+                    year = energyTypeData[i].year;
+                } else if (i == energyTypeData.length-1){    //end last row
+                dataTable = `${dataTable}<td>${energyTypeData[i][energy_type]}</td></tr>`;
+                } else if (energyTypeData[i].year != year) { //every new row
+                    dataTable = `${dataTable}</tr><tr><th>${energyTypeData[i].year}</th><td>${energyTypeData[i][energy_type]}</td>`;
+                    year = energyTypeData[i].year;
+                } else if(energyTypeData[i].year == year) { //the rest of the data
+                    dataTable = `${dataTable}<td>${energyTypeData[i][energy_type]}</td>`;
+                };
+            };
+
+            template = template.replace('TYPEHERE', energyOptions[energy_type]);
+            template = template.replace('STATES', columnheaders);
+            template = template.replace('DATA', dataTable);
+
+            template = template.replace('var energy_type', 'var energy_type = "' + energyOptions[energy_type] + '"');
+            template = template.replace('var energy_counts', "var energy_counts = " + JSON.stringify(energy_counts));
+            res.status(200).send(template);
+        });
+    };
 });
+
 
 app.listen(port, () => {
     console.log('Now listening on port ' + port);

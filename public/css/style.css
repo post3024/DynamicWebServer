@@ -4,6 +4,7 @@
   }
   
   body, html {
+    margin: 20px;
     height: 100%;
   }
   
@@ -43,4 +44,12 @@
   tr:hover{
     background-color: lightblue;
   }
-  tr:nth-child(even) {background-color: lightgrey;}
+  tr:nth-child(even) {
+    background-color: lightgrey;
+  }
+  .previous {
+    float: left;
+  }
+  .next {
+    float: right;
+  }

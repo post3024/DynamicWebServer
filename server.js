@@ -23,6 +23,15 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
     }
 });
 
+// create static list of the states to use later
+let stateListSql = 'SELECT state_abbreviation FROM States';
+let stateArr = [];
+Promise.all([dbQueryPromise(stateListSql)]).then((results) => {
+    for(i = 0; i < results[0].length; i++) {
+        stateArr.push(results[0][i].state_abbreviation);
+    }
+});
+
 app.use(express.static(public_dir)); // serve static files from 'public' directory
 
 // promise function that reads a file and resolves the string html template
@@ -100,42 +109,73 @@ app.get('/state/:selected_state', (req, res) => {
         let stateNameRows = results[1];
         let stateDataRows = results[2];
 
-        let stateName = stateNameRows[0].state_name;
-
-        let coal_counts = [];
-        let natural_gas_counts =[];
-        let nuclear_counts = [];
-        let petroleum_counts = [];
-        let renewable_counts = [];
-
-        let dataTable = '';
-
-        for(i = 0; i < stateDataRows.length; i++) {
-            // adds row of data to the final string
-            dataTable = dataTable + addNewRowForState(stateDataRows[i]);
-
-            // adds to the array variables
-            coal_counts.push(stateDataRows[i].coal);
-            natural_gas_counts.push(stateDataRows[i].natural_gas);
-            nuclear_counts.push(stateDataRows[i].nuclear);
-            petroleum_counts.push(stateDataRows[i].petroleum);
-            renewable_counts.push(stateDataRows[i].renewable);
+        if (stateNameRows.length == 0) {
+            res.status(404).send('Error: no data for state ' + req.params.selected_state);
         }
+        else {
+            let stateName = stateNameRows[0].state_name;
 
-        // dynamically set the state name and the table to show the specified data
-        template = template.replace('STATE', stateName);
-        template = template.replace('DATA', dataTable);
+            // Find the previous and next states alphabetically
+            let stateIndex = stateArr.indexOf(req.params.selected_state);
+            let previousState;
+            let nextState;
+            if (stateIndex == 0) {
+                previousState = stateArr[stateArr.length - 1];
+                nextState = stateArr[stateIndex + 1];
+            }
+            else if (stateIndex == stateArr.length - 1) {
+                previousState = stateArr[stateIndex - 1];
+                nextState = stateArr[0];
+            }
+            else {
+                previousState = stateArr[stateIndex - 1];
+                nextState = stateArr[stateIndex + 1];
+            }
 
-        // set the javascript variables in state.html
-        template = template.replace('var state', 'var state = "' + stateName + '"');
-        template = template.replace('var coal_counts', 'var coal_counts = [' + coal_counts + ']');
-        template = template.replace('var natural_gas_counts', 'var natural_gas_counts = [' + natural_gas_counts + ']');
-        template = template.replace('var nuclear_counts', 'var nuclear_counts = [' + nuclear_counts + ']');
-        template = template.replace('var petroleum_counts', 'var petroleum_counts = [' + petroleum_counts + ']');
-        template = template.replace('var renewable_counts', 'var renewable_counts = [' + renewable_counts + ']');
+            previousState = '/state/' + previousState;
+            nextState = '/state/' + nextState;
 
-        // send final edited template to browser
-        res.status(200).send(template);
+            let coal_counts = [];
+            let natural_gas_counts =[];
+            let nuclear_counts = [];
+            let petroleum_counts = [];
+            let renewable_counts = [];
+
+            let dataTable = '';
+
+            for(i = 0; i < stateDataRows.length; i++) {
+                // adds row of data to the final string
+                dataTable = dataTable + addNewRowForState(stateDataRows[i]);
+
+                // adds to the array variables
+                coal_counts.push(stateDataRows[i].coal);
+                natural_gas_counts.push(stateDataRows[i].natural_gas);
+                nuclear_counts.push(stateDataRows[i].nuclear);
+                petroleum_counts.push(stateDataRows[i].petroleum);
+                renewable_counts.push(stateDataRows[i].renewable);
+            }
+
+            // dynamically set the state name and the table to show the specified data
+            template = template.replace('STATE', stateName);
+            template = template.replace('DATA', dataTable);
+
+            // set the previous and next links
+            template = template.replace('previousLink', previousState);
+            template = template.replace('nextLink', nextState);
+
+            // set the javascript variables in state.html
+            template = template.replace('var state', 'var state = "' + stateName + '"');
+            template = template.replace('var coal_counts', 'var coal_counts = [' + coal_counts + ']');
+            template = template.replace('var natural_gas_counts', 'var natural_gas_counts = [' + natural_gas_counts + ']');
+            template = template.replace('var nuclear_counts', 'var nuclear_counts = [' + nuclear_counts + ']');
+            template = template.replace('var petroleum_counts', 'var petroleum_counts = [' + petroleum_counts + ']');
+            template = template.replace('var renewable_counts', 'var renewable_counts = [' + renewable_counts + ']');
+
+            // send final edited template to browser
+            res.status(200).send(template);
+        }
+    }).catch(error => { 
+        console.error(error.message);
     });
 });
 

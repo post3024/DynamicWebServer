@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>US Energy Consumption</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <script type="application/javascript">
         // `state` and arrays of consumption per year => set these variables equal to appropriate value
         //   * these variables will be defined and accessible from any script loaded after this one
@@ -15,25 +15,75 @@
         var petroleum_counts;
         var renewable_counts;
     </script>
+    <script src="https://cdn.anychart.com/js/latest/anychart-bundle.min.js"></script>
+    <script src="https://cdn.anychart.com/js/latest/data-adapter.min.js"></script>
 </head>
 <body>
+    <style>
+        div.scroll{
+            width: 75%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            overflow-y: scroll;
+            overflow-x: scroll;
+        }
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+        td, th { 
+            padding: 10px;
+            position: relative;
+        }
+        tr:nth-child(even) {background-color: lightgrey;}
+        tr:hover{
+            background-color: lightblue;
+        }
+    </style>
     <h1>STATE</h1>
-    <img src="images⁩/USmap.png" alt="U.S.A. Map"/>
-    <table>
-        <thead>
-            <tr>
-                <th>Year</th>
-                <th>Coal</th>
-                <th>Natural Gas</th>
-                <th>Nuclear</th>
-                <th>Petroleum</th>
-                <th>Renewable</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            DATA
-        </tbody>
-    </table>
+    <img src="../images/USmap.png" alt="U.S.A. Map"/>
+    <a href="previousLink" class="previous">Previous</a>
+    <a href="nextLink" class="next">Next</a>
+    <div class="scroll">
+        <table id=htmlTable>
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Coal</th>
+                    <th>Natural Gas</th>
+                    <th>Nuclear</th>
+                    <th>Petroleum</th>
+                    <th>Renewable</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                DATA
+            </tbody>
+        </table>
+    </div>
+    <script type="application/javascript">   //build the chart from the table
+        anychart.onDocumentLoad(function() {
+            // create chart and set data
+            var chart = anychart.line();
+            // parse table
+            var tableData = anychart.data.parseHtmlTable("#htmlTable");
+
+            var interactivity = chart.interactivity();
+            interactivity.hoverMode("bySpot");
+            interactivity.spotRadius(20);
+
+            chart.data(tableData);
+            chart.legend(false);
+            chart.title(state);
+            chart.xAxis().title("Year");
+            chart.yAxis().title("in billion BTU");       
+            chart.container("container").draw();
+            tooltip.displayMode("single");
+            chart.animation(true);
+        });
+    </script>
+    <div id="container"></div>
 </body>
 </html>

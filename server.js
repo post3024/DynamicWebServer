@@ -65,19 +65,170 @@ function dbQueryPromise(sql) {
 
 // GET request handler for home page '/' (redirect to /year/2018)
 app.get('/', (req, res) => {
-    res.redirect('/year/2018');
+    let yearDataQuery = "SELECT * FROM Consumption WHERE year = 2018";
+    Promise.all([readFilePromise(path.join(template_dir, 'year.html')), dbQueryPromise(yearDataQuery)]).then((results) => {
+        // set promise resolves to the appropriate variables
+        let template = results[0];
+        let yearDataRows = results[1];
+
+        let year = 2018;
+
+        let coal_counts = [];
+        let natural_gas_counts =[];
+        let nuclear_counts = [];
+        let petroleum_counts = [];
+        let renewable_counts = [];
+
+        var coalTotal       = 0;
+        var naturalGasTotal = 0;
+        var nuclearTotal    = 0;
+        var petroleumTotal  = 0;
+        var renewableTotal  = 0;
+
+        let dataTable = '';
+
+        for(i = 0; i < yearDataRows.length; i++) {
+            // adds row of data to the final string
+            dataTable = dataTable + addNewRowForYear(yearDataRows[i]);
+
+            // adds to the array variables
+            coal_counts.push(yearDataRows[i].coal);
+            natural_gas_counts.push(yearDataRows[i].natural_gas);
+            nuclear_counts.push(yearDataRows[i].nuclear);
+            petroleum_counts.push(yearDataRows[i].petroleum);
+            renewable_counts.push(yearDataRows[i].renewable);
+
+            //adds to the total
+            coalTotal       = coalTotal+yearDataRows[i].coal;
+            naturalGasTotal = naturalGasTotal+yearDataRows[i].natural_gas;
+            nuclearTotal    = nuclearTotal+yearDataRows[i].nuclear;
+            petroleumTotal  = petroleumTotal+yearDataRows[i].petroleum;
+            renewableTotal  = renewableTotal+yearDataRows[i].renewable;
+        }
+
+        // dynamically set the state name and the table to show the specified data
+        template = template.replace('YEAR', year);
+        template = template.replace('DATA', dataTable);
+
+        // set the javascript variables in year.html
+        template = template.replace('var year', 'var year = ' + year);
+        template = template.replace('var coal_count', 'var coal_count = ' + coalTotal);
+        template = template.replace('var natural_gas_count', 'var natural_gas_count = ' + naturalGasTotal);
+        template = template.replace('var nuclear_count', 'var nuclear_count = ' + nuclearTotal );
+        template = template.replace('var petroleum_count', 'var petroleum_count = ' + petroleumTotal);
+        template = template.replace('var renewable_count', 'var renewable_count = ' + renewableTotal);
+
+        // send final edited template to browser
+        res.status(200).send(template);
+    }).catch((err) => {
+        Write404Error(res);
+    });
 });
 
 // GET request handler for '/year/*'
 app.get('/year/:selected_year', (req, res) => {
-    console.log(req.params.selected_year);
-    fs.readFile(path.join(template_dir, 'year.html'), (err, template) => {
-        // modify `template` and send response
-        // this will require a query to the SQL database
+    if(req.params.selected_year < 1960 || req.params.selected_year > 2018) {
+        res.writeHead(404, {'Content-Type': 'text/plain'});
+        res.write('Error: no data for year ' + req.params.selected_year);
+        res.end();
+    }
+    else{
+        let yearDataQuery = 'SELECT * FROM Consumption WHERE year = ' + req.params.selected_year;
+    
+        Promise.all([readFilePromise(path.join(template_dir, 'year.html')), dbQueryPromise(yearDataQuery)]).then((results) => {
+            // set promise resolves to the appropriate variables
+            let template = results[0];
+            let yearDataRows = results[1];
 
-        res.status(200).type('html').send(template); // <-- you may need to change this
-    });
+            let year = req.params.selected_year;
+
+            let coal_counts = [];
+            let natural_gas_counts =[];
+            let nuclear_counts = [];
+            let petroleum_counts = [];
+            let renewable_counts = [];
+
+            var coalTotal       = 0;
+            var naturalGasTotal = 0;
+            var nuclearTotal    = 0;
+            var petroleumTotal  = 0;
+            var renewableTotal  = 0;
+
+            let dataTable = '';
+
+            for(i = 0; i < yearDataRows.length; i++) {
+                // adds row of data to the final string
+                dataTable = dataTable + addNewRowForYear(yearDataRows[i]);
+
+                // adds to the array variables
+                coal_counts.push(yearDataRows[i].coal);
+                natural_gas_counts.push(yearDataRows[i].natural_gas);
+                nuclear_counts.push(yearDataRows[i].nuclear);
+                petroleum_counts.push(yearDataRows[i].petroleum);
+                renewable_counts.push(yearDataRows[i].renewable);
+
+                //adds to the total
+                coalTotal       = coalTotal+yearDataRows[i].coal;
+                naturalGasTotal = naturalGasTotal+yearDataRows[i].natural_gas;
+                nuclearTotal    = nuclearTotal+yearDataRows[i].nuclear;
+                petroleumTotal  = petroleumTotal+yearDataRows[i].petroleum;
+                renewableTotal  = renewableTotal+yearDataRows[i].renewable;
+            }
+
+            // dynamically set the year and the table to show the specified data
+            template = template.replace('YEAR', year);
+            template = template.replace('DATA', dataTable);
+            /*//Button Features
+            var currentYear = parseInt(year);
+            var previousYear = currentYear - 1;
+            var nextYear = currentYear + 1;
+            if (currentYear == 1960) {
+                previousYear = 2018;
+            }
+            else if (currentYear == 2018) {
+                nextYear = 1960;
+            }
+            var previousYearButton = "href=\"/year/" + previousYear + "\">"+previousYear;
+            var nextYearButton = "href=\"/year/" + nextYear + "\">"+nextYear
+            response = response.replace("href=\"\">Prev", previousYearButton);
+            response = response.replace("href=\"\">Next", nextYearButton);
+            WriteHtml(res, response);*/
+
+            // set the javascript variables in year.html
+            template = template.replace('var year', 'var year = ' + year);
+            template = template.replace('var coal_count', 'var coal_count = ' + coalTotal);
+            template = template.replace('var natural_gas_count', 'var natural_gas_count = ' + naturalGasTotal);
+            template = template.replace('var nuclear_count', 'var nuclear_count = ' + nuclearTotal );
+            template = template.replace('var petroleum_count', 'var petroleum_count = ' + petroleumTotal);
+            template = template.replace('var renewable_count', 'var renewable_count = ' + renewableTotal);
+
+            // send final edited template to browser
+            res.status(200).send(template);
+        }).catch((err) => {
+            Write404Error(res);
+        });
+    }
+    
 });
+
+// string concatenation function that adds the row to the html
+function addNewRowForYear(row) {
+    let result = '';
+
+    let total = row.coal + row.natural_gas + row.nuclear + row.petroleum + row.renewable;
+
+    result = result + '<tr>';
+    result = result + '<td>' + row.state_abbreviation + "</td>";
+    result = result + '<td>' + row.coal + "</td>";
+    result = result + '<td>' + row.natural_gas + "</td>";
+    result = result + '<td>' + row.nuclear + "</td>";
+    result = result + '<td>' + row.petroleum + "</td>";
+    result = result + '<td>' + row.renewable + "</td>";
+    result = result + '<td>' + total + "</td>";
+    result = result + '</tr>';
+
+    return result;
+}
 
 // string concatenation function that adds the row to the html
 function addNewRowForState(row) {

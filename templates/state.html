@@ -16,7 +16,9 @@
         var renewable_counts;
     </script>
     <script src="https://cdn.anychart.com/js/latest/anychart-bundle.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.7.0/js/anychart-pie.min.js"></script>
     <script src="https://cdn.anychart.com/js/latest/data-adapter.min.js"></script>
+    <script type="application/javascript" src="/scripts/viewselect.js"></script>
 </head>
 <body>
     <style>
@@ -41,6 +43,22 @@
             background-color: lightblue;
         }
     </style>
+
+    <!--navigation between year, state, and energy type-->
+    <div id="view_select">
+        <h2>Menu</h2>
+        <label for="view_type">View by: </label>
+        <select id="view_type" onchange="ChangedSearchType()">
+            <option value="year" selected>Year</option>
+            <option value="state">State</option>
+            <option value="energy">Energy Type</option>
+        </select>
+        <label for="view_value">Select: </label>
+        <select id="view_value">
+        </select>
+        <button type="button" onclick="SubmitView()">View</button>
+    </div>
+
     <h1>STATE</h1>
     <img src="../images/USmap.png" alt="U.S.A. Map"/>
     <a href="previousLink" class="previous">Previous</a>

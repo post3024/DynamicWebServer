@@ -53,3 +53,13 @@
   .next {
     float: right;
   }
+  .prev_next {
+    display: inline-block;
+    background-color: #dddddd;
+    font-size: 1rem;
+    font-weight: normal;
+    color: #000000;
+    padding: .5rem;
+    margin-left: 1rem;
+    text-decoration: none;
+}

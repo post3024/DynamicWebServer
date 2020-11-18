@@ -15,34 +15,17 @@
         var petroleum_counts;
         var renewable_counts;
     </script>
-    <script src="https://cdn.anychart.com/js/latest/anychart-bundle.min.js"></script>
-    <script src="https://cdn.anychart.com/releases/8.7.0/js/anychart-pie.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
     <script src="https://cdn.anychart.com/js/latest/data-adapter.min.js"></script>
+    <link href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css" type="text/css" rel="stylesheet">
+    <link href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css" type="text/css" rel="stylesheet">
     <script type="application/javascript" src="/scripts/viewselect.js"></script>
 </head>
 <body onload="Init()">
-    <style>
-        div.scroll{
-            width: 75%;
-            margin-left: auto;
-            margin-right: auto;
-            height: 500px;
-            overflow-y: scroll;
-            overflow-x: scroll;
-        }
-        table {
-            border-spacing: 0;
-            border-collapse: collapse;
-        }
-        td, th { 
-            padding: 10px;
-            position: relative;
-        }
-        tr:nth-child(even) {background-color: lightgrey;}
-        tr:hover{
-            background-color: lightblue;
-        }
-    </style>
+    
+    <a href="/"><h1>US Energy Consumption</h1></a>
 
     <!--navigation between year, state, and energy type-->
     <div id="view_select">
@@ -62,6 +45,9 @@
     <img src="../images/stateAbbreviation.png" alt="U.S.A. Map"/>
     <a href="previousLink" class="previous">Previous</a>
     <a href="nextLink" class="next">Next</a>
+    
+    <div id="container"></div>
+    
     <div class="scroll">
         <table id=htmlTable>
             <thead>
@@ -82,25 +68,46 @@
     </div>
     <script type="application/javascript">   //build the chart from the table
         anychart.onDocumentLoad(function() {
-            // create chart and set data
-            var chart = anychart.line();
-            // parse table
+
             var tableData = anychart.data.parseHtmlTable("#htmlTable");
-
-            var interactivity = chart.interactivity();
-            interactivity.hoverMode("bySpot");
-            interactivity.spotRadius(20);
-
+            
+            // create chart and set data
+            var chart = anychart.area();
             chart.data(tableData);
-            chart.legend(false);
-            chart.title(state);
-            chart.xAxis().title("Year");
-            chart.yAxis().title("in billion BTU");       
-            chart.container("container").draw();
-            tooltip.displayMode("single");
+
+            // turn on chart animation
             chart.animation(true);
+
+            var crosshair = chart.crosshair();
+            crosshair.enabled(true)
+            .yStroke(null)
+            .xStroke('#fff')
+            .zIndex(39);
+            crosshair.yLabel().enabled(false);
+
+            // force chart to stack values by Y scale.
+            chart.yScale().stackMode('value');
+
+            // set chart title text settings
+            chart.title(state);
+
+            // turn on legend
+            chart.legend().enabled(true).fontSize(13).padding([0, 0, 20, 0]);
+
+            // set titles for axises
+            chart.xAxis().title('Years');
+            chart.yAxis().title('in billion BTU');
+
+            // interactivity and tooltip settings
+            chart.interactivity().hoverMode('by-x');
+            chart.tooltip().displayMode('union');
+
+            // set container id for the chart
+            chart.container('container');
+
+            // initiate chart drawing
+            chart.draw();
         });
     </script>
-    <div id="container"></div>
 </body>
 </html>

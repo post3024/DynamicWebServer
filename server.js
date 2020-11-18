@@ -314,6 +314,9 @@ app.get('/state/:selected_state', (req, res) => {
             template = template.replace('previousLink', previousState);
             template = template.replace('nextLink', nextState);
 
+            // set image dynamically
+            template = template.replace('stateAbbreviation', req.params.selected_state);
+
             // set the javascript variables in state.html
             template = template.replace('var state', 'var state = "' + stateName + '"');
             template = template.replace('var coal_counts', 'var coal_counts = [' + coal_counts + ']');

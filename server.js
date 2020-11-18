@@ -356,7 +356,7 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                 columnheaders = columnheaders +  '<th>' + columns[i].state_abbreviation + "</th>";            
             };
         
-                //DYNAMICALLY FILL THE TABLE
+            //DYNAMICALLY FILL THE TABLE
             let dataTable = '';
             let year = 1900; //any number that's not 1960
             for(i = 0; i < energyTypeData.length; i++) {
@@ -374,10 +374,42 @@ app.get('/energy/:selected_energy_source', (req, res) => {
                 };
             };
 
+
+
+            //Previous and Next buttons
+            let typeArr = Object.keys(energyOptions);
+            let typeIndex = typeArr.indexOf(energy_type);
+            let previousType;
+            let nextType;
+            if (typeIndex == 0) {
+                previousType = typeArr[typeArr.length - 1];
+                nextType = typeArr[typeIndex + 1];
+            }
+            else if (typeIndex == typeArr.length - 1) {
+                previousType = typeArr[typeIndex - 1];
+                nextType = typeArr[0];
+            }
+            else {
+                previousType = typeArr[typeIndex - 1];
+                nextType = typeArr[typeIndex + 1];
+            }
+
+            previousType = '/energy/' + previousType;
+            nextType = '/energy/' + nextType;
+            //Image Population
+            let imgString = 'src="../images/' + energy_type +'.jpg" alt="image of ' + energyOptions[energy_type] + '"';
+            template = template.replace('IMAGE', imgString);
+            
+            // set the previous and next links
+            template = template.replace('previousLink', previousType);
+            template = template.replace('nextLink', nextType);
+
+            // fill the html file
             template = template.replace('TYPEHERE', energyOptions[energy_type]);
             template = template.replace('STATES', columnheaders);
             template = template.replace('DATA', dataTable);
 
+            // replace the variables
             template = template.replace('var energy_type', 'var energy_type = "' + energyOptions[energy_type] + '"');
             template = template.replace('var energy_counts', "var energy_counts = " + JSON.stringify(energy_counts));
             res.status(200).send(template);

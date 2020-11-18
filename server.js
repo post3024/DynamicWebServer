@@ -73,12 +73,6 @@ app.get('/', (req, res) => {
 
         let year = 2018;
 
-        let coal_counts = [];
-        let natural_gas_counts =[];
-        let nuclear_counts = [];
-        let petroleum_counts = [];
-        let renewable_counts = [];
-
         var coalTotal       = 0;
         var naturalGasTotal = 0;
         var nuclearTotal    = 0;
@@ -90,13 +84,6 @@ app.get('/', (req, res) => {
         for(i = 0; i < yearDataRows.length; i++) {
             // adds row of data to the final string
             dataTable = dataTable + addNewRowForYear(yearDataRows[i]);
-
-            // adds to the array variables
-            coal_counts.push(yearDataRows[i].coal);
-            natural_gas_counts.push(yearDataRows[i].natural_gas);
-            nuclear_counts.push(yearDataRows[i].nuclear);
-            petroleum_counts.push(yearDataRows[i].petroleum);
-            renewable_counts.push(yearDataRows[i].renewable);
 
             //adds to the total
             coalTotal       = coalTotal+yearDataRows[i].coal;
@@ -142,11 +129,26 @@ app.get('/year/:selected_year', (req, res) => {
 
             let year = req.params.selected_year;
 
-            let coal_counts = [];
-            let natural_gas_counts =[];
-            let nuclear_counts = [];
-            let petroleum_counts = [];
-            let renewable_counts = [];
+            // Find the previous and next year
+            let previousYear;
+            let nextYear;
+            if (year==1960) {
+                previousYear = 2018;
+                nextYear = year+1;
+            }
+            else if (year==2018) {
+                previousYear = year-1;
+                nextYear = 1960;
+            }
+            else {
+                previousYear = year-1;
+                nextYear = year+1;
+            }
+
+            previousYear = '/year/' + previousYear;
+            nextYear = '/state/' + nextYear;
+
+            let dataTable = '';
 
             var coalTotal       = 0;
             var naturalGasTotal = 0;
@@ -154,18 +156,9 @@ app.get('/year/:selected_year', (req, res) => {
             var petroleumTotal  = 0;
             var renewableTotal  = 0;
 
-            let dataTable = '';
-
             for(i = 0; i < yearDataRows.length; i++) {
                 // adds row of data to the final string
                 dataTable = dataTable + addNewRowForYear(yearDataRows[i]);
-
-                // adds to the array variables
-                coal_counts.push(yearDataRows[i].coal);
-                natural_gas_counts.push(yearDataRows[i].natural_gas);
-                nuclear_counts.push(yearDataRows[i].nuclear);
-                petroleum_counts.push(yearDataRows[i].petroleum);
-                renewable_counts.push(yearDataRows[i].renewable);
 
                 //adds to the total
                 coalTotal       = coalTotal+yearDataRows[i].coal;
@@ -178,6 +171,11 @@ app.get('/year/:selected_year', (req, res) => {
             // dynamically set the year and the table to show the specified data
             template = template.replace('YEAR', year);
             template = template.replace('DATA', dataTable);
+
+            // set the previous and next links
+            template = template.replace('previousLink', previousYear);
+            template = template.replace('nextLink', nextYear);
+
             /*//Button Features
             var currentYear = parseInt(year);
             var previousYear = currentYear - 1;

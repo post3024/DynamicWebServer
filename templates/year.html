@@ -63,9 +63,32 @@
 
     <h1>YEAR</h1>
 
-    <a class="prev_next" href="">Prev</a> <!-- link to itself if year is 1960 -->
-    <a class="prev_next" href="">Next</a> <!-- link to itself if year is 2018 -->
+    <a href="previousLink" class="previous">Previous</a>
+    <a href="nextLink" class="next">Next</a>
 
+    <a href="/"><h1>US Energy Consumption</h1></a>
+
+    <div id="container"></div>
+
+    <div class="scroll">
+        <h3>Consumption by State</h3>
+        <table id = htmlTable>
+            <thead>
+                <tr>
+                    <th>State</th>
+                    <th>Coal</th>
+                    <th>Natural Gas</th>
+                    <th>Nuclear</th>
+                    <th>Petroleum</th>
+                    <th>Renewable</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                DATA
+            </tbody>
+        </table>
+    </div>
     <script type="application/javascript"> //build the chart from the table
         anychart.onDocumentLoad(function() {
             var data = [
@@ -93,29 +116,5 @@
             chart.animation("true");
         });
     </script>
-
-    <a href="/"><h1>US Energy Consumption</h1></a>
-
-    <div id="container"></div>
-
-    <div class="scroll">
-        <h3>Consumption by State</h3>
-        <table id = htmlTable>
-            <thead>
-                <tr>
-                    <th>State</th>
-                    <th>Coal</th>
-                    <th>Natural Gas</th>
-                    <th>Nuclear</th>
-                    <th>Petroleum</th>
-                    <th>Renewable</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                DATA
-            </tbody>
-        </table>
-    </div>
 </body>
 </html>

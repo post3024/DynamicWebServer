@@ -17,6 +17,7 @@
         var petroleum_count;
         var renewable_count;
     </script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
     <script src="https://cdn.anychart.com/js/latest/anychart-bundle.min.js"></script>
     <script src="https://cdn.anychart.com/releases/8.7.0/js/anychart-pie.min.js"></script>
     <script src="https://cdn.anychart.com/js/latest/data-adapter.min.js"></script>
@@ -25,11 +26,10 @@
 
 <body onload="Init()">
 
-    <a href="/"><h1>US Energy Consumption</h1></a>
+    <a class="title" href="/">US Energy Consumption</a>
 
     <!--navigation between year, state, and energy type-->
     <div id="view_select">
-        <h2>Menu</h2>
         <label for="view_type">View by: </label>
         <select id="view_type" onchange="ChangedSearchType()">
             <option value="year" selected>Year</option>
@@ -43,13 +43,12 @@
 
     <h1>YEAR</h1>
 
-    <a class="prev_next" href="">Prev</a> <!-- link to itself if year is 1960 -->
-    <a class="prev_next" href="">Next</a> <!-- link to itself if year is 2018 -->
+    <a class="previous" href="">Previous Year</a> <!-- link to itself if year is 1960 -->
+    <a class="next" href="">Next Year</a> <!-- link to itself if year is 2018 -->
 
     <div id="container"></div>
 
     <div class="scroll">
-        <h3>Consumption by State</h3>
         <table id = htmlTable>
             <thead>
                 <tr>
@@ -67,6 +66,7 @@
             </tbody>
         </table>
     </div>
+    
     <script type="application/javascript"> //build the chart from the table
         anychart.onDocumentLoad(function() {
             var data = [

@@ -130,23 +130,17 @@ app.get('/year/:selected_year', (req, res) => {
             let year = req.params.selected_year;
 
             // Find the previous and next year
-            let previousYear;
-            let nextYear;
+            let previousYear = parseInt(parseInt(year)-1);
+            let nextYear = parseInt(parseInt(year)+1);
             if (year==1960) {
                 previousYear = 2018;
-                nextYear = year+1;
             }
             else if (year==2018) {
-                previousYear = year-1;
                 nextYear = 1960;
-            }
-            else {
-                previousYear = year-1;
-                nextYear = year+1;
             }
 
             previousYear = '/year/' + previousYear;
-            nextYear = '/state/' + nextYear;
+            nextYear = '/year/' + nextYear;
 
             let dataTable = '';
 

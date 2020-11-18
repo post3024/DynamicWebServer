@@ -20,7 +20,7 @@
     <script src="https://cdn.anychart.com/js/latest/data-adapter.min.js"></script>
     <script type="application/javascript" src="/scripts/viewselect.js"></script>
 </head>
-<body>
+<body onload="Init()">
     <style>
         div.scroll{
             width: 75%;
@@ -49,13 +49,12 @@
         <h2>Menu</h2>
         <label for="view_type">View by: </label>
         <select id="view_type" onchange="ChangedSearchType()">
-            <option value="year" selected>Year</option>
-            <option value="state">State</option>
+            <option value="year">Year</option>
+            <option value="state" selected>State</option>
             <option value="energy">Energy Type</option>
         </select>
         <label for="view_value">Select: </label>
-        <select id="view_value">
-        </select>
+        <select id="view_value"></select>
         <button type="button" onclick="SubmitView()">View</button>
     </div>
 

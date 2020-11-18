@@ -1,4 +1,5 @@
 function Init() {
+    LoadOptions();
     ChangedSearchType();
 }
 
@@ -20,7 +21,9 @@ function ChangedSearchType(){
 function SubmitView() {
     var view_type = document.getElementById('view_type');
     var view_value = document.getElementById('view_value');
-    window.location = '/' + view_type.value + '/' + view_value.value;
+    if (view_value.value != 'Select') {
+        window.location = '/' + view_type.value + '/' + view_value.value;
+    }
 }
 
 function RemoveAllChildren(element) {
@@ -30,6 +33,11 @@ function RemoveAllChildren(element) {
 }
 
 function PopulateYears() {
+    var view_value = document.getElementById('view_value');
+    let selectOption = document.createElement('option');
+    selectOption.value = 'Select';
+    selectOption.textContent = 'Select';
+    view_value.appendChild(selectOption);
     for (let i = 1960; i <= 2018; i++) {
         let option = document.createElement('option');
         option.value = i.toString();
@@ -39,6 +47,7 @@ function PopulateYears() {
 }
 
 function PopulateStates() {
+    var view_value = document.getElementById('view_value');
     for (let i = 0; i < states.length; i++) {
         let option = document.createElement('option');
         option.value = states[i];
@@ -48,6 +57,11 @@ function PopulateStates() {
 }
 
 function PopulateEnergyType() {
+    var view_value = document.getElementById('view_value');
+    let selectOption = document.createElement('option');
+    selectOption.value = 'Select';
+    selectOption.textContent = 'Select';
+    view_value.appendChild(selectOption);
     for (let key in energy_types) {
         let option = document.createElement('option');
         option.value = key;
@@ -56,7 +70,22 @@ function PopulateEnergyType() {
     }
 }
 
-var states = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME',
+function LoadOptions() {
+    var view_type = document.getElementById('view_type');
+    var view_value = document.getElementById('view_value');
+    RemoveAllChildren(view_value);
+    if (view_type.value === 'year') {
+        PopulateYears();
+    }
+    else if (view_type.value === 'state') {
+        PopulateStates();
+    }
+    else {
+        PopulateEnergyType();
+    }
+}
+
+var states = ['Select', 'AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME',
     'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA',
     'VT', 'WA', 'WI', 'WV', 'WY'];
 

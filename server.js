@@ -73,6 +73,11 @@ app.get('/', (req, res) => {
 
         let year = 2018;
 
+        let previousYear = parseInt(parseInt(year)-1);
+        let nextYear = 1960;
+        previousYear = '/year/' + previousYear;
+        nextYear = '/year/' + nextYear;
+
         var coalTotal       = 0;
         var naturalGasTotal = 0;
         var nuclearTotal    = 0;
@@ -96,6 +101,10 @@ app.get('/', (req, res) => {
         // dynamically set the state name and the table to show the specified data
         template = template.replace('YEAR', year);
         template = template.replace('DATA', dataTable);
+
+        // set the previous and next links
+        template = template.replace('previousLink', previousYear);
+        template = template.replace('nextLink', nextYear);
 
         // set the javascript variables in year.html
         template = template.replace('var year', 'var year = ' + year);
@@ -169,22 +178,6 @@ app.get('/year/:selected_year', (req, res) => {
             // set the previous and next links
             template = template.replace('previousLink', previousYear);
             template = template.replace('nextLink', nextYear);
-
-            /*//Button Features
-            var currentYear = parseInt(year);
-            var previousYear = currentYear - 1;
-            var nextYear = currentYear + 1;
-            if (currentYear == 1960) {
-                previousYear = 2018;
-            }
-            else if (currentYear == 2018) {
-                nextYear = 1960;
-            }
-            var previousYearButton = "href=\"/year/" + previousYear + "\">"+previousYear;
-            var nextYearButton = "href=\"/year/" + nextYear + "\">"+nextYear
-            response = response.replace("href=\"\">Prev", previousYearButton);
-            response = response.replace("href=\"\">Next", nextYearButton);
-            WriteHtml(res, response);*/
 
             // set the javascript variables in year.html
             template = template.replace('var year', 'var year = ' + year);

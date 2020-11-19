@@ -1,5 +1,4 @@
 function Init() {
-    LoadOptions();
     ChangedSearchType();
 }
 
@@ -67,21 +66,6 @@ function PopulateEnergyType() {
         option.value = key;
         option.textContent = energy_types[key];
         view_value.appendChild(option);
-    }
-}
-
-function LoadOptions() {
-    var view_type = document.getElementById('view_type');
-    var view_value = document.getElementById('view_value');
-    RemoveAllChildren(view_value);
-    if (view_type.value === 'year') {
-        PopulateYears();
-    }
-    else if (view_type.value === 'state') {
-        PopulateStates();
-    }
-    else {
-        PopulateEnergyType();
     }
 }
 

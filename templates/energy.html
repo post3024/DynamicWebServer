@@ -19,31 +19,37 @@
 </head>
 <body onload="Init()">
 
-    <a class="title" href="/">US Energy Consumption</a>
+    <div class="header">
+        <a class="title" href="/">US Energy Consumption</a>
 
-    <!--navigation between year, state, and energy type-->
-    <div id="view_select">
-        <label for="view_type">View by: </label>
-        <select id="view_type" onchange="ChangedSearchType()">
-            <option value="year">Year</option>
-            <option value="state">State</option>
-            <option value="energy"selected>Energy Type</option>
-        </select>
-        <label for="view_value">Select: </label>
-        <select id="view_value">
-        </select>
-        <button type="button" onclick="SubmitView()">View</button>
+        <!--navigation between year, state, and energy type-->
+        <div class="view_select">
+            <label for="view_type">View Data by: </label>
+            <select id="view_type" onchange="ChangedSearchType()">
+                <option value="year">Year</option>
+                <option value="state">State</option>
+                <option value="energy"selected>Energy Type</option>
+            </select>
+            <label for="view_value">Select: </label>
+            <select id="view_value">
+            </select>
+            <button type="button" onclick="SubmitView()">View</button>
+        </div>
     </div>
-
-    <h1>TYPEHERE</h1>
+    
+    <div class="content">
+    <h1 class="typeTitle">TYPEHERE</h1>
 
     <a class="previous" href="previousLink">Previous Energy Source</a>
     <a class="next" href="nextLink">Next Energy Source</a>
 
     <img class="dataImage" IMAGE/>
 
+</div>
+
     <div id="container"></div>
 
+    <h3>Energy Consumption Table</h3>
     <div class="scroll">
         <table id = htmlTable>
             <tr>
@@ -67,7 +73,7 @@
 
         chart.data(tableData);
         chart.legend(false);
-        chart.title(energy_type);
+        chart.title("U.S. Consumption Data for " + energy_type);
         chart.xAxis().title("Year");
         chart.yAxis().title("in billion BTU");       
         chart.container("container").draw();

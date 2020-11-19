@@ -26,32 +26,34 @@
 
 <body onload="Init()">
 
-    <a class="title" href="/">US Energy Consumption</a>
+    <div class="header">
+        <a class="title" href="/">US Energy Consumption</a>
 
-    <!--navigation between year, state, and energy type-->
-    <div id="view_select">
-        <label for="view_type">View by: </label>
-        <select id="view_type" onchange="ChangedSearchType()">
-            <option value="year" selected>Year</option>
-            <option value="state">State</option>
-            <option value="energy">Energy Type</option>
-        </select>
-        <label for="view_value">Select: </label>
-        <select id="view_value"></select>
-        <button type="button" onclick="SubmitView()">View</button>
+        <!--navigation between year, state, and energy type-->
+        <div class="view_select">
+            <label for="view_type">View Data by: </label>
+            <select id="view_type" onchange="ChangedSearchType()">
+                <option value="year" selected>Year</option>
+                <option value="state">State</option>
+                <option value="energy">Energy Type</option>
+            </select>
+            <label for="view_value">Select: </label>
+            <select id="view_value"></select>
+            <button type="button" onclick="SubmitView()">View</button>
+        </div>
     </div>
 
-    <h1>YEAR</h1>
+    <div class="content">
+        <h1 class="typeTitle">YEAR</h1>
 
-    <a href="previousLink" class="previous">Previous Year</a>
-    <a href="nextLink" class="next">Next Year</a>
-    <br/>
-    <br/>
+        <a class="previous" href="previousLink">Previous Year</a>
+        <a class="next" href="nextLink">Next Year</a>
+    </div>
 
     <div id="container"></div>
 
+    <h3>Energy Consumption Table</h3>
     <div class="scroll">
-        <h3>Consumption by State</h3>
         <table id = htmlTable>
             <thead>
                 <tr>

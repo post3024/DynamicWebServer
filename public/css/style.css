@@ -1,13 +1,17 @@
 * {
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
   }
   
   body, html {
     height: 100%;
-    margin: 20px;
     font-family: 'Times New Roman', serif;
     text-align: center;
+    background-color:  #eef6f2;
+  }
+
+  .content {
+    margin: 50px;
   }
 
   h1 {
@@ -15,7 +19,19 @@
   }
 
   h2 {
+    font-size: 3rem;
+  }
+
+  h3 {
     font-size: 2rem;
+    padding-top: 40px;
+  }
+
+  .header {
+    background-image: url('../images/header.jpg');
+    padding: 100px 0px;
+    width: 100%;
+    box-shadow: 5px 5px 5px #7a7a7a;
   }
 
   .title {
@@ -23,17 +39,33 @@
     color: black;
     font-size: 4rem;
     font-weight: bold;
+    padding: 20px;
+    background-color: #eef6f2;
+    box-shadow: 5px 5px 5px #7a7a7a;
   }
 
-  #view_select {
-    margin: 20px 0px;
+  .title:hover {
+    border: 5px solid #79b1b3;
+  }
+
+  .view_select {
+    width: 40%;
+    margin: 50px auto 0px auto;
+    font-size: 1.5rem;
+    padding: 20px;
+    background-color: #eef6f2;
+    box-shadow: 5px 5px 5px #7a7a7a;
+  }
+
+  .typeTitle {
+    padding: 40px;
   }
 
   .dataImage {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0px auto 50px auto;
     width: 50%;
+    box-shadow: 5px 5px 5px #7a7a7a;
   }
   
   #container {
@@ -46,10 +78,9 @@
   table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
-    float: left;
     width: 100%;
-    margin: 40px 0 0 25px;
     border-spacing: 0;
+    background-color: white;
   }
   
   td, th {
@@ -63,20 +94,19 @@
   }
 
   div.scroll{
-    width: 75%;
-    margin-left: auto;
-    margin-right: auto;
+    width: 80%;
+    margin: 40px auto;
     height: 500px;
     overflow-y: scroll;
     overflow-x: scroll;
   }
 
-  tr:hover{
-    background-color: lightblue;
-  }
-
   tr:nth-child(even) {
     background-color: lightgrey;
+  }
+
+  tr:hover{
+    background-color: #79b1b3;
   }
 
   .previous {
@@ -88,12 +118,13 @@
   }
 
   .previous, .next {
-    background-color: #dddddd;
+    background-color:#79b1b3;
     font-size: 1rem;
-    font-weight: normal;
-    color: #000000;
-    padding: .5rem;
+    font-weight: bold;
+    color: white;
+    padding: 20px;
     text-decoration: none;
-    width: 100px;
-    border: 1px solid black;
+    width: 10%;
+    box-shadow: 5px 5px 5px #7a7a7a;
+    margin-bottom: 20px;
   }
